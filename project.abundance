@@ -4,6 +4,12 @@
   "y": 0,
   "uniqueID": "id-17",
   "name": "util.asEdges",
+  "ioValues": [
+    {
+      "name": "shape",
+      "ioValue": "__GEOMETRY_INPUT__"
+    }
+  ],
   "topLevel": true,
   "allAtoms": [
     {
@@ -17,9 +23,43 @@
           "ioValue": "__GEOMETRY_INPUT__"
         }
       ]
+    },
+    {
+      "atomType": "Code",
+      "x": 0.470703125,
+      "y": 0.42857142857142855,
+      "uniqueID": "id-20",
+      "ioValues": [
+        {
+          "name": "shape",
+          "ioValue": "__GEOMETRY_INPUT__"
+        }
+      ],
+      "interpreterVersion": 1,
+      "code": "// as edges\nfunction run(\n  shape: Assembly\n) {\n  let result = undefined;\n  return shape.onLeafs((leaf) => {\n    if (leaf.is3D()) {\n      leaf.geometry = helper(leaf.geometry.edges)\n    } else if (leaf.geometry instanceof replicad.Drawing) {\n      const solidifiedFaces = leaf.geometry.sketchOnPlane(leaf.plane).extrude(0.1).faces\n      const drawingAsFace = solidifiedFaces[solidifiedFaces.length - 2] // Usually where the initial face is indexed after extrusion.   \n      leaf.geometry = helper(drawingAsFace.edges)\n    } else {\n      return undefined\n    }\n    return leaf;\n  })\n  return result;\n}\n\nfunction helper(edges) {\n  if (edges.length > 1) {\n    const subassembly = []\n    for (const edge of edges) {\n      subassembly.push(new Assembly({\n        geometry: replicad.assembleWire([edge])\n      }))\n    }\n    return subassembly\n  } else {\n    return replicad.assembleWire(edges)\n  }\n}\n",
+      "compiledCode": "\"use strict\";\n// as edges\nfunction run(shape) {\n    let result = undefined;\n    return shape.onLeafs((leaf) => {\n        if (leaf.is3D()) {\n            leaf.geometry = helper(leaf.geometry.edges);\n        }\n        else if (leaf.geometry instanceof replicad.Drawing) {\n            const solidifiedFaces = leaf.geometry.sketchOnPlane(leaf.plane).extrude(0.1).faces;\n            const drawingAsFace = solidifiedFaces[solidifiedFaces.length - 2]; // Usually where the initial face is indexed after extrusion.   \n            leaf.geometry = helper(drawingAsFace.edges);\n        }\n        else {\n            return undefined;\n        }\n        return leaf;\n    });\n    return result;\n}\nfunction helper(edges) {\n    if (edges.length > 1) {\n        const subassembly = [];\n        for (const edge of edges) {\n            subassembly.push(new Assembly({\n                geometry: replicad.assembleWire([edge])\n            }));\n        }\n        return subassembly;\n    }\n    else {\n        return replicad.assembleWire(edges);\n    }\n}\n"
+    },
+    {
+      "atomType": "Input",
+      "x": 0.0231,
+      "y": 0.38571428571428573,
+      "uniqueID": "id-39",
+      "name": "shape",
+      "type": "geometry"
     }
   ],
-  "allConnectors": [],
+  "allConnectors": [
+    {
+      "ap2Name": "number or geometry",
+      "ap1ID": "id-20",
+      "ap2ID": "id-18"
+    },
+    {
+      "ap2Name": "shape",
+      "ap1ID": "id-39",
+      "ap2ID": "id-20"
+    }
+  ],
   "unitsKey": "Unitless",
   "fileTypeVersion": 1,
   "filetypeVersion": 1
